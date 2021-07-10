@@ -1,9 +1,6 @@
 ﻿using FacturacionService.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FacturacionService.Controllers
@@ -37,7 +34,8 @@ namespace FacturacionService.Controllers
             var result = await _signInManager.PasswordSignInAsync(userModel.email, userModel.password, false, false);
             if (result.Succeeded)
             {
-                return Ok();
+                var user = await _userManager.FindByEmailAsync(userModel.email);
+                return Ok(user);
             }
             else
             {
