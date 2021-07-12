@@ -41,5 +41,17 @@ namespace FacturacionService.Controllers
             else
                 return NotFound();
         }
+
+        [HttpGet]
+        [Route("Download")]
+        public async Task<ActionResult> Download(string codigo,int tipo)
+        {
+            List<taComprobanteArchivo> archivo = await _context.TaComprobanteArchivo.FromSqlInterpolated($"taComprobanteArchivoLeerPorCodigoComprobante @CodigoComprobante = {codigo} ,@CodigoTipoComprobanteArchivo = {tipo}").ToListAsync();
+            if (archivo.Count > 0)
+            {
+                return Ok(archivo[0]);
+            }
+            return Ok();
+        }
     }
 }

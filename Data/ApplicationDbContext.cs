@@ -16,6 +16,7 @@ namespace FacturacionService.Data
         }
 
         public virtual DbSet<ComprobanteAnonimo> ComprobanteAnonimo { get; set; }
+        public virtual DbSet<taComprobanteArchivo> TaComprobanteArchivo { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,6 +27,11 @@ namespace FacturacionService.Data
                 {
                     eb.HasNoKey();
                     eb.ToTable("ComprobanteAnonimo");
+                })
+                .Entity<taComprobanteArchivo>(eb =>
+                {
+                    eb.HasNoKey();
+                    eb.ToTable("taComprobanteArchivo");
                 });
         }
     }
