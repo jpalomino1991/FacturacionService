@@ -53,5 +53,25 @@ namespace FacturacionService.Controllers
             }
             return Ok();
         }
+
+        [HttpGet]
+        [Route("GetBills")]
+        public async Task<ActionResult> GetBills(string numeroDocumento)
+        {
+            if (ModelState.IsValid)
+            {
+                List<ComprobanteAnonimo> comprobantes = await _context.ComprobanteAnonimo.FromSqlInterpolated($"taComprobanteUsuarioLeer @PorNumeroDocumento = 1,@NumeroDocumento = {numeroDocumento},@PorSerieNumero = 0,@NumeroSerie = '',@NumeroComprobante = 0,@PorFechaComprobante = 0,@FechaComprobanteA = '',@FechaComprobanteB = ''").ToListAsync();
+                if (comprobantes.Count > 0)
+                {
+                    return Ok(comprobantes);
+                }
+                else
+                {
+                    return NotFound("No hay resultados");
+                }
+            }
+            else
+                return NotFound();
+        }
     }
 }
