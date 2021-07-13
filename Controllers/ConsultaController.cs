@@ -51,7 +51,8 @@ namespace FacturacionService.Controllers
             {
                 return Ok(archivo[0]);
             }
-            return Ok();
+            else
+                return NoContent();
         }
 
         [HttpGet]
@@ -67,7 +68,7 @@ namespace FacturacionService.Controllers
                 }
                 else
                 {
-                    return NotFound("No hay resultados");
+                    return NoContent();
                 }
             }
             else

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FacturacionService.Models
 {
@@ -17,5 +15,9 @@ namespace FacturacionService.Models
         public string NombreEstadoComprobante { get; set; }
         public int CodigoEstadoComprobanteSUNAT { get; set; }
         public string NombreEstadoComprobanteSUNAT { get; set; }
+        [NotMapped]
+        public bool xml { get; set; } = false;
+        [NotMapped]
+        public bool pdf { get; set; } = false;
     }
 }
