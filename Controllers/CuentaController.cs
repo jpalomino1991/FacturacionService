@@ -1,6 +1,7 @@
 ﻿using FacturacionService.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace FacturacionService.Controllers
@@ -40,6 +41,21 @@ namespace FacturacionService.Controllers
             else
             {
                 return NotFound("Correo o usuario inválido");
+            }
+        }
+
+        [HttpPost]
+        [Route("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                await _signInManager.SignOutAsync();
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return NotFound();
             }
         }
     }

@@ -5,7 +5,7 @@ namespace FacturacionService.Models
 {
     public class ComprobanteAnonimo
     {
-        public Int64 CodigoComprobante { get; set; }
+        public string CodigoComprobante { get; set; }
         public byte CodigoTipoComprobante { get; set; }
         public string NombreTipoComprobante { get; set; }
         public string SerieNumero { get; set; }
