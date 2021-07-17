@@ -1,4 +1,5 @@
-﻿using FacturacionService.Models;
+﻿using AutoMapper;
+using FacturacionService.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,11 +13,13 @@ namespace FacturacionService.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly IMapper _mapper;
 
-        public CuentaController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public CuentaController(IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _mapper = mapper;
         }
         public IActionResult Index()
         {
@@ -57,6 +60,34 @@ namespace FacturacionService.Controllers
             {
                 return NotFound();
             }
+        }
+
+        [HttpPost]
+        [Route("Register")]
+        public async Task<ActionResult> Registrar(UserRegistrationModel userModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(userModel);
+            }
+            var user = _mapper.Map<User>(userModel);
+            var result = await _userManager.CreateAsync(user, userModel.Password);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.TryAddModelError(error.Code, error.Description);
+                }
+                return View(userModel);
+            }
+
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            //var confirmationLink = Url.Action(nameof(ConfirmarCorreo), "Cuenta", new { token, email = user.Email }, Request.Scheme);
+            //var message = new Message(new string[] { user.Email }, "Confirmation email link", confirmationLink);
+            //await _emailSender.SendEmailAsync(message);
+
+            await _userManager.AddToRoleAsync(user, "Administrador");
+            return Ok();
         }
     }
 }

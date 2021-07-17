@@ -62,6 +62,7 @@ namespace FacturacionService
 
             services.AddControllers();
             services.AddHttpContextAccessor();
+            services.AddAutoMapper(typeof(Startup));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
