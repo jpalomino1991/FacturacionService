@@ -11,9 +11,6 @@ namespace FacturacionService.Models
     {
         [Required(ErrorMessage = "Ingrese razón social")]
         public string RazonSocial { get; set; }
-        [NotMapped]
-        [Display(Name = "Tipo de Documento")]
-        public int TipoDocumento { get; set; }
         [Required(ErrorMessage = "Ingrese número de documento")]
         public string NumeroDocumento { get; set; }
         [Required(ErrorMessage = "Ingrese correo electrónico")]
