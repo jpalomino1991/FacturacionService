@@ -82,11 +82,70 @@ namespace FacturacionService.Controllers
             }
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            //var confirmationLink = Url.Action(nameof(ConfirmarCorreo), "Cuenta", new { token, email = user.Email }, Request.Scheme);
+            var confirmationLink = Url.Action(nameof(Registrar), "Cuenta", new { token, email = user.Email }, Request.Scheme);
             //var message = new Message(new string[] { user.Email }, "Confirmation email link", confirmationLink);
             //await _emailSender.SendEmailAsync(message);
 
             await _userManager.AddToRoleAsync(user, "Administrador");
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("ConfirmarCorreo")]
+        public async Task<IActionResult> ConfirmarCorreo(string token, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return NotFound();
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+                return Ok();
+            else
+                return NoContent();
+        }
+
+        [HttpGet]
+        [Route("OlvidoContrasena")]
+        public async Task<IActionResult> OlvidoContrasena(string email)
+        {
+            if (String.IsNullOrEmpty(email))
+                return NotFound();
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return NotFound();
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            //var callback = Url.Action(nameof(RecuperarContrasena), "Cuenta", new { token, email = user.Email }, Request.Scheme);
+            //var message = new Message(new string[] { user.Email }, "Recuperar Contraseña", callback);
+            //await _emailSender.SendEmailAsync(message);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("RecuperarContrasena")]
+        public async Task<IActionResult> RecuperarContrasena(ResetPasswordModel resetPasswordModel)
+        {
+            if (!ModelState.IsValid)
+                return View(resetPasswordModel);
+
+            var user = await _userManager.FindByEmailAsync(resetPasswordModel.email);
+
+            if (user == null)
+                return NotFound();
+
+            var resetPassResult = await _userManager.ResetPasswordAsync(user, resetPasswordModel.token, resetPasswordModel.password);
+
+            if (!resetPassResult.Succeeded)
+            {
+                foreach (var error in resetPassResult.Errors)
+                {
+                    ModelState.TryAddModelError(error.Code, error.Description);
+                }
+                return NotFound();
+            }
+
             return Ok();
         }
     }
