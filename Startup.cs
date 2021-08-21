@@ -1,3 +1,4 @@
+using EmailService;
 using FacturacionService.CustomTokenProviders;
 using FacturacionService.Data;
 using FacturacionService.Models;
@@ -52,6 +53,15 @@ namespace FacturacionService
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders()
                 .AddTokenProvider<EmailConfirmationTokenProvider<User>>("emailconfirmation");
+
+            var emailConfig = Configuration
+                .GetSection("EmailConfiguration")
+                .Get<EmailConfiguration>();
+            services.AddSingleton(emailConfig);
+            services.AddScoped<IEmailSender, EmailSender>();
+
+            services.Configure<EmailConfirmationTokenProviderOptions>(opt =>
+                opt.TokenLifespan = TimeSpan.FromDays(1));
 
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {

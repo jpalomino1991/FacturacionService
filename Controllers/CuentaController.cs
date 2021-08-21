@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EmailService;
 using FacturacionService.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,13 +14,15 @@ namespace FacturacionService.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly IEmailSender _emailSender;
         private readonly IMapper _mapper;
 
-        public CuentaController(IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager)
+        public CuentaController(IMapper mapper, UserManager<User> userManager, IEmailSender emailSender, SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
+            _emailSender = emailSender;
         }
         public IActionResult Index()
         {
@@ -116,9 +119,10 @@ namespace FacturacionService.Controllers
                 return NotFound();
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            //var callback = Url.Action(nameof(RecuperarContrasena), "Cuenta", new { token, email = user.Email }, Request.Scheme);
-            //var message = new Message(new string[] { user.Email }, "Recuperar Contraseña", callback);
-            //await _emailSender.SendEmailAsync(message);
+            token = token.Replace("/","%2F");
+            var callback = $"{Environment.GetEnvironmentVariable("WEB_URL")}recoverpass/{token}/{email}";
+            var message = new Message(new string[] { user.Email }, "Recuperar Contraseña", callback);
+            await _emailSender.SendEmailAsync(message);
 
             return Ok();
         }
